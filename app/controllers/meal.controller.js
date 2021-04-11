@@ -12,10 +12,8 @@ exports.create = (req, res) => {
   // Create a Meal
   const meal = new Meal({
     title: req.body.title,
-    weight: req.body.weight,
-    ratio: req.body.ratio,
-    insuline: req.body.insuline,
-    published: req.body.published ? req.body.published : false
+    carbo: req.body.carbo,
+    isReference: false
   });
 
   // Save Meal in the database
@@ -131,8 +129,8 @@ exports.deleteAll = (req, res) => {
   };
 
 // Find all published Meals
-exports.findAllPublished = (req, res) => {
-    Meal.find({ published: true })
+exports.findAllReferenceMeals = (req, res) => {
+    Meal.find({ isReference: true })
       .then(data => {
         res.send(data);
       })

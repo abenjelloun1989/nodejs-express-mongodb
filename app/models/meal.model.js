@@ -1,11 +1,10 @@
 module.exports = mongoose => {
     var schema = mongoose.Schema(
       {
+        code: String,
         title: String,
-        weight: String,
-        ratio: String,
-        insuline: String,
-        published: Boolean
+        carbo: String,
+        isReference: Boolean
       },
       { timestamps: true }
     );
