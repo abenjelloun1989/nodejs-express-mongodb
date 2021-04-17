@@ -4,6 +4,7 @@ module.exports = mongoose => {
         code: String,
         title: String,
         carbo: String,
+        url: String,
         isReference: Boolean
       },
       { timestamps: true }

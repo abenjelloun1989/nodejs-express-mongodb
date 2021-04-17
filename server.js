@@ -56,6 +56,7 @@ fs.createReadStream('./app/resources/ciqual_20200707.csv', {encoding: 'utf-8'})
       code: row.alim_code,
       title: row.alim_nom_fr,
       carbo: row.carbo,
+      url: row.alim_image_url,
       isReference: true
     });
 
