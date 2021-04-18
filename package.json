@@ -23,6 +23,7 @@
     "express": "^4.17.1",
     "globalize": "^1.6.0",
     "iana-tz-data": "^2019.1.0",
+    "image-downloader": "^4.0.2",
     "mongoose": "^5.12.3"
   }
 }

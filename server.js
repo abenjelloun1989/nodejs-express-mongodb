@@ -31,10 +31,6 @@ db.mongoose
     process.exit();
   });
 
-// clean db
-const Meal = db.meals;
-Meal.collection.drop();
-
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to abenjelloun application." });
@@ -44,35 +40,63 @@ app.get("/", (req, res) => {
 require("./app/routes/meal.routes")(app);
 
 // load csv
-const csv = require('csv-parser');
-const fs = require('fs');
-
-fs.createReadStream('./app/resources/ciqual_20200707.csv', {encoding: 'utf-8'})
-  .pipe(csv({ separator: ';' }))
-  .on('data', (row) => {
-    
-    // Create a Meal
-    const meal = new Meal({
-      code: row.alim_code,
-      title: row.alim_nom_fr,
-      carbo: row.carbo,
-      url: row.alim_image_url,
-      isReference: true
-    });
-
-    // Save Meal in the database
-    meal
-      .save(meal)
-      .catch(err => {
-        console.log("Some error occurred while creating the Meal.");
-      });
-  })
-  .on('end', () => {
-    console.log('Csv file successfully processed!');
-  });
+LoadStaticData();
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+function LoadStaticData() {
+  const csv = require('csv-parser');
+  const fs = require('fs');
+  const download = require('image-downloader');
+  const imagesPath = '../common/images/';
+  const resourcesPath = '../common/resources/';
+    
+  // clean db
+  const Meal = db.meals;
+  Meal.collection.drop();
+
+  fs.createReadStream(resourcesPath.concat('ciqual_20200707.csv'), { encoding: 'utf-8' })
+    .pipe(csv({ separator: ';' }))
+    .on('data', (row) => {
+
+      // Create a Meal
+      const meal = new Meal({
+        code: row.code,
+        title: row.alim_nom_fr,
+        carbo: row.alim_carbo,
+        url: row.alim_image_url,
+        isReference: true
+      });
+
+      if (meal && meal.url && !fs.existsSync(imagesPath.concat(meal.code).concat(".jpg"))) {
+        // cache images on disk
+        const options = {
+          url: meal.url,
+          dest: imagesPath.concat(meal.code).concat(".jpg")
+        };
+
+        download.image(options)
+          .then(({ filename }) => {
+            // success action
+            console.log(meal.code.concat(" downloaded image"))
+          })
+          .catch((err) => {
+            console.error(err);
+            console.log('ERROR while downloading image : '.concat(meal.code));
+          });
+      }
+      // Save Meal in the database
+      meal
+        .save(meal)
+        .catch(err => {
+          console.log("Some error occurred while creating the Meal.");
+        });
+    })
+    .on('end', () => {
+      console.log('Csv file successfully processed!');
+    });
+}
