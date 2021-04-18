@@ -52,8 +52,8 @@ function LoadStaticData() {
   const csv = require('csv-parser');
   const fs = require('fs');
   const download = require('image-downloader');
-  const imagesPath = '../common/images/';
-  const resourcesPath = '../common/resources/';
+  const imagesPath = '../dia-smart-common/images/';
+  const resourcesPath = '../dia-smart-common/resources/';
     
   // clean db
   const Meal = db.meals;
